@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Una pregunta importante 💘</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            max-width: 420px;
+        }
+
+        h1 {
+            color: #e63946;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #siBtn {
+            background: #e63946;
+            color: white;
+            margin-right: 10px;
+        }
+
+        #noBtn {
+            background: #adb5bd;
+            color: white;
+            position: absolute;
+        }
+
+        .opciones button {
+            margin: 10px;
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .hearts {
+            font-size: 28px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card" id="card">
+    <h1>¿Aceptás una cita conmigo? 💖</h1>
+    <p>Prometo risas, buena vibra y un plan bonito</p>
+
+    <button id="siBtn">Sí 💕</button>
+    <button id="noBtn">No 🙈</button>
+</div>
+
+<script>
+    const noBtn = document.getElementById("noBtn");
+    const siBtn = document.getElementById("siBtn");
+    const card = document.getElementById("card");
+
+    noBtn.addEventListener("mouseover", () => {
+        const x = Math.random() * (window.innerWidth - 120);
+        const y = Math.random() * (window.innerHeight - 60);
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
+    });
+
+    siBtn.addEventListener("click", () => {
+        card.innerHTML = `
+            <h1>Entonces decidamos el destino 😍</h1>
+            <p>¿A dónde nos vamos?</p>
+
+            <div class="opciones">
+                <button onclick="respuesta('Puerto Viejo 🌊🌴')">Puerto Viejo 🌊🌴</button>
+                <button onclick="respuesta('San Carlos 🌄☕')">San Carlos 🌄☕</button>
+            </div>
+        `;
+    });
+
+    function respuesta(lugar) {
+        card.innerHTML = `
+            <h1>¡Perfecto! 💘</h1>
+            <p>Entonces la cita será en <strong>${lugar}</strong></p>
+            <div class="hearts">💖 💕 💘 💞</div>
+            <p>Gracias por decir que sí 😊</p>
+        `;
+    }
+</script>
+
+</body>
+</html>
