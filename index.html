@@ -1,113 +1,234 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Una pregunta importante 💘</title>
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            font-family: 'Segoe UI', sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Una pregunta para vos 💘</title>
+  <style>
+    :root{
+      --bg1:#ff9a9e;
+      --bg2:#fad0c4;
+      --card:#ffffff;
+      --text:#333;
+      --muted:#666;
+      --primary:#e63946;
+      --secondary:#ff6b6b;
+      --gray:#adb5bd;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;height:100vh;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,var(--bg1),var(--bg2));
+      font-family:"Segoe UI",system-ui,Arial,sans-serif;overflow:hidden;color:var(--text);
+    }
+    .bg-hearts{position:fixed;inset:0;pointer-events:none;z-index:0}
+    .card{
+      width:min(520px,92vw);background:var(--card);padding:34px 28px;border-radius:22px;
+      text-align:center;box-shadow:0 18px 55px rgba(0,0,0,.22);z-index:1;position:relative;
+    }
+    h1{margin:0 0 10px;color:var(--primary);font-size:28px}
+    p{margin:10px 0 18px;color:var(--muted);line-height:1.45;font-size:16px}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;
+      background:rgba(230,57,70,.1);color:var(--primary);font-weight:600;font-size:13px}
 
-        .card {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            max-width: 420px;
-        }
+    /* Cuenta regresiva */
+    .countdown{
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      margin:14px 0 6px;
+      flex-wrap:wrap;
+    }
+    .cd-box{
+      background:rgba(230,57,70,.08);
+      border:1px solid rgba(230,57,70,.15);
+      border-radius:16px;
+      padding:10px 14px;
+      min-width:80px;
+    }
+    .cd-num{
+      font-size:22px;
+      font-weight:800;
+      color:var(--primary);
+    }
+    .cd-lbl{
+      font-size:12px;
+      color:rgba(0,0,0,.55);
+      margin-top:4px;
+    }
+    .cd-note{
+      font-size:13px;
+      color:rgba(0,0,0,.55);
+      margin-bottom:6px;
+    }
 
-        h1 {
-            color: #e63946;
-            margin-bottom: 10px;
-        }
-
-        p {
-            color: #555;
-            margin-bottom: 30px;
-        }
-
-        button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 30px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        #siBtn {
-            background: #e63946;
-            color: white;
-            margin-right: 10px;
-        }
-
-        #noBtn {
-            background: #adb5bd;
-            color: white;
-            position: absolute;
-        }
-
-        .opciones button {
-            margin: 10px;
-            background: #ff6b6b;
-            color: white;
-        }
-
-        .hearts {
-            font-size: 28px;
-            margin-top: 20px;
-        }
-    </style>
+    .btn-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+    button{
+      padding:12px 20px;border:none;border-radius:999px;font-size:16px;cursor:pointer;
+      transition:transform .15s ease
+    }
+    button:active{transform:translateY(1px) scale(.99)}
+    .btn-primary{background:var(--primary);color:#fff;box-shadow:0 10px 22px rgba(230,57,70,.25)}
+    .btn-secondary{background:var(--secondary);color:#fff}
+    .btn-gray{background:var(--gray);color:#fff}
+    #noBtn{position:absolute;left:52%;top:86%;transform:translate(-50%,-50%);z-index:2}
+    .choice-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+    .note{font-size:13px;color:rgba(0,0,0,.55);margin-top:10px}
+    .hearts{font-size:26px;margin-top:14px}
+    canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:3}
+    #ytWrap{position:fixed;width:1px;height:1px;overflow:hidden;left:-9999px;top:-9999px}
+  </style>
 </head>
 <body>
 
-<div class="card" id="card">
-    <h1>¿Aceptás una cita conmigo? 💖</h1>
-    <p>Prometo risas, buena vibra y un plan bonito</p>
+<div class="bg-hearts" id="bgHearts"></div>
+<canvas id="confetti"></canvas>
 
-    <button id="siBtn">Sí 💕</button>
-    <button id="noBtn">No 🙈</button>
+<div id="ytWrap">
+  <iframe id="ytPlayer" allow="autoplay; encrypted-media"></iframe>
+</div>
+
+<div class="card" id="card">
+  <div class="pill">Pregunta seria 😅</div>
+
+  <h1>Hola, Gennesis 💖</h1>
+  <p>
+    Su gordo quiere invitarla a un lugar bonito.<br>
+    ¿Está ocupada usted este <strong>14 de febrero</strong>, chinita?
+  </p>
+
+  <!-- Cuenta regresiva -->
+  <div class="countdown">
+    <div class="cd-box"><div class="cd-num" id="d">--</div><div class="cd-lbl">Días</div></div>
+    <div class="cd-box"><div class="cd-num" id="h">--</div><div class="cd-lbl">Horas</div></div>
+    <div class="cd-box"><div class="cd-num" id="m">--</div><div class="cd-lbl">Min</div></div>
+    <div class="cd-box"><div class="cd-num" id="s">--</div><div class="cd-lbl">Seg</div></div>
+  </div>
+  <div class="cd-note" id="cdNote">Cuenta regresiva para nuestro 14 💘</div>
+
+  <div class="btn-row">
+    <button class="btn-primary" id="siBtn">Sí 💕</button>
+    <button class="btn-gray" id="noBtn">No 🙈</button>
+  </div>
+
+  <p class="note">Tip: el “No” anda nervioso.</p>
 </div>
 
 <script>
-    const noBtn = document.getElementById("noBtn");
-    const siBtn = document.getElementById("siBtn");
-    const card = document.getElementById("card");
+  const TU_NOMBRE = "Chokz";
+  const WHATSAPP_NUM = "50683653165";
+  const YT_VIDEO_ID = "VmZzD-8mE1o"; // Prince Royce – Te robaré
 
-    noBtn.addEventListener("mouseover", () => {
-        const x = Math.random() * (window.innerWidth - 120);
-        const y = Math.random() * (window.innerHeight - 60);
-        noBtn.style.left = x + "px";
-        noBtn.style.top = y + "px";
-    });
+  // Fecha objetivo: 14 febrero 2026, 6:00 pm
+  const TARGET = new Date(2026, 1, 14, 18, 0, 0);
 
-    siBtn.addEventListener("click", () => {
-        card.innerHTML = `
-            <h1>Entonces decidamos el destino 😍</h1>
-            <p>¿A dónde nos vamos?</p>
+  const card = document.getElementById("card");
+  const noBtn = document.getElementById("noBtn");
+  const siBtn = document.getElementById("siBtn");
+  const yt = document.getElementById("ytPlayer");
 
-            <div class="opciones">
-                <button onclick="respuesta('Puerto Viejo 🌊🌴')">Puerto Viejo 🌊🌴</button>
-                <button onclick="respuesta('San Carlos 🌄☕')">San Carlos 🌄☕</button>
-            </div>
-        `;
-    });
+  // Botón NO huye
+  noBtn.addEventListener("mouseover", () => {
+    const x = Math.random() * (window.innerWidth - 140);
+    const y = Math.random() * (window.innerHeight - 80);
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+  });
 
-    function respuesta(lugar) {
-        card.innerHTML = `
-            <h1>¡Perfecto! 💘</h1>
-            <p>Entonces la cita será en <strong>${lugar}</strong></p>
-            <div class="hearts">💖 💕 💘 💞</div>
-            <p>Gracias por decir que sí 😊</p>
-        `;
+  // Corazones
+  const bg = document.getElementById("bgHearts");
+  function heart(){
+    const s=document.createElement("div");
+    s.textContent="💖";
+    s.style.position="absolute";
+    s.style.left=Math.random()*100+"%";
+    s.style.top="-20px";
+    s.style.fontSize=(18+Math.random()*18)+"px";
+    bg.appendChild(s);
+    let y=-20;
+    const t=setInterval(()=>{
+      y+=1.2;
+      s.style.top=y+"px";
+      if(y>window.innerHeight){clearInterval(t);s.remove();}
+    },16);
+  }
+  setInterval(heart,800);
+
+  // Confetti
+  const c=document.getElementById("confetti"),ctx=c.getContext("2d");
+  function resize(){c.width=innerWidth;c.height=innerHeight}
+  resize(); addEventListener("resize",resize);
+  function confetti(){
+    let conf=[...Array(140)].map(()=>({
+      x:Math.random()*c.width,y:Math.random()*-c.height,r:Math.random()*6+4,vy:Math.random()*3+2
+    }));
+    const id=setInterval(()=>{
+      ctx.clearRect(0,0,c.width,c.height);
+      conf.forEach(p=>{
+        p.y+=p.vy;
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle="rgba(255,107,107,.9)";
+        ctx.fill();
+      });
+      if(conf.every(p=>p.y>c.height)) clearInterval(id);
+    },16);
+  }
+
+  // Cuenta regresiva
+  const d=document.getElementById("d"),h=document.getElementById("h"),
+        m=document.getElementById("m"),s=document.getElementById("s"),
+        cdNote=document.getElementById("cdNote");
+
+  function tick(){
+    let diff = TARGET - new Date();
+    if(diff<=0){
+      d.textContent=h.textContent=m.textContent=s.textContent="0";
+      cdNote.textContent="Ya llegó el 14, mi amor 💘";
+      return;
     }
+    const sec=Math.floor(diff/1000);
+    d.textContent=Math.floor(sec/86400);
+    h.textContent=String(Math.floor((sec%86400)/3600)).padStart(2,"0");
+    m.textContent=String(Math.floor((sec%3600)/60)).padStart(2,"0");
+    s.textContent=String(sec%60).padStart(2,"0");
+  }
+  tick(); setInterval(tick,1000);
+
+  // Click Sí
+  siBtn.addEventListener("click", ()=>{
+    yt.src=`https://www.youtube.com/embed/${YT_VIDEO_ID}?autoplay=1&loop=1&playlist=${YT_VIDEO_ID}`;
+    confetti();
+    card.innerHTML=`
+      <h1>Entonces decidamos 😍</h1>
+      <p>¿A dónde nos vamos, mi amor?</p>
+      <div class="choice-row">
+        <button class="btn-secondary" onclick="pick('Puerto Viejo 🌊🌴')">Puerto Viejo 🌊🌴</button>
+        <button class="btn-secondary" onclick="pick('San Carlos 🌄☕')">San Carlos 🌄☕</button>
+      </div>
+    `;
+  });
+
+  function pick(lugar){
+    card.innerHTML=`
+      <h1>Te amo 💖</h1>
+      <p>
+        Muchas gracias por aceptar, mi amor.<br>
+        Sé que no ibas a decir que no… aunque el sistema no te dejara 😅
+      </p>
+      <p>Entonces nuestra cita será en <strong>${lugar}</strong>.</p>
+      <div class="hearts">💖 💕 💘 💞</div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="wa('${lugar}')">Confirmar por WhatsApp 💬</button>
+      </div>
+    `;
+  }
+
+  function wa(lugar){
+    const msg=encodeURIComponent(
+      `Hola mi amor 💖\nConfirmado: ${lugar} este 14 de febrero 😍\n— ${TU_NOMBRE}`
+    );
+    open(`https://wa.me/${WHATSAPP_NUM}?text=${msg}`,"_blank");
+  }
 </script>
 
 </body>
